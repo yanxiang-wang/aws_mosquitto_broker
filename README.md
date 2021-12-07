@@ -1,9 +1,6 @@
 AWS Mosquitto Broker
 --------------------------------
 
-[![](https://images.microbadger.com/badges/image/mantgambl/aws_mosquitto_broker.svg)](https://microbadger.com/images/mantgambl/aws_mosquitto_broker "Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/mantgambl/aws_mosquitto_broker.svg)](https://microbadger.com/images/mantgambl/aws_mosquitto_broker "Get your own version badge on microbadger.com")
-
 Docker Image for AWS IOT connected Mosquitto broker
 
 ![enter image description here](https://s3.amazonaws.com/aws-iot-blog-assets/how-to-bridge-mosquitto-mqtt-broker-to-aws-iot/1-overview.png)
@@ -32,7 +29,7 @@ Then run AWS Configure and put your Region, your Access Key and Acces Secret
 ## Step 3: Create an IAM policy for the bridge
 
 ```
-aws iot create-policy --policy-name bridge --policy-document '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Action": "iot:*","Resource": "*"}]}
+aws iot create-policy --policy-name bridgeMQTT --policy-document '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Action": "iot:*","Resource": "*"}]}'
 ```
 
 
@@ -44,9 +41,10 @@ Place yourself in ./config/certs directory and create certificates and keys, not
 
 	cd ./config/certs
 
-	sudo aws iot create-keys-and-certificate --set-as-active \
-	--certificate-pem-outfile cert.crt --private-key-outfile private.key \
-	--public-key-outfile public.key –region eu-central-1 \
+	sudo aws iot create-keys-and-certificate --set-as-active \ 
+	--certificate-pem-outfile cert.crt --private-key-outfile private.key \ 
+	--public-key-outfile public.key --region us-east-1
+
 
 
 
@@ -68,7 +66,8 @@ Add read permissions to private key and client cert
 
 Download root CA certificate
 
-	sudo wget https://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem -O rootCA.pem
+	# in cert folder
+	sudo wget https://www.amazontrust.com/repository/AmazonRootCA1.pem -O rootCA.pem
 
 
 ## Step 5: Edit mosquitto custom config file
@@ -97,21 +96,21 @@ Edit ./config/conf.d/awsbridge.conf and follow the awsbridge.conf instructions
 Console / Log output:
 
 ```
-1493564060: mosquitto version 1.4.10 (build date 2016-10-26 14:35:35+0000) starting
-1493564060: Config loaded from /mosquitto/config/mosquitto.conf.
-1493564060: Opening ipv4 listen socket on port 1883.
-1493564060: Opening ipv6 listen socket on port 1883.
-1493564060: Bridge local.bridgeawsiot doing local SUBSCRIBE on topic localgateway_to_awsiot
-1493564060: Bridge local.bridgeawsiot doing local SUBSCRIBE on topic both_directions
-1493564060: Connecting bridge awsiot (a3uewmymwlcmar.iot.us-east-1.amazonaws.com:8883)
-1493564060: Bridge bridgeawsiot sending CONNECT
-1493564060: Received CONNACK on connection local.bridgeawsiot.
-1493564060: Bridge local.bridgeawsiot sending SUBSCRIBE (Mid: 1, Topic: awsiot_to_localgateway, QoS: 1)
-1493564060: Bridge local.bridgeawsiot sending UNSUBSCRIBE (Mid: 2, Topic: localgateway_to_awsiot)
-1493564060: Bridge local.bridgeawsiot sending SUBSCRIBE (Mid: 3, Topic: both_directions, QoS: 1)
-1493564060: Received SUBACK from local.bridgeawsiot
-1493564061: Received UNSUBACK from local.bridgeawsiot
-1493564061: Received SUBACK from local.bridgeawsiot
+1638882142: mosquitto version 1.4.15 (build date 2018-03-04 15:19:39+0000) starting
+1638882142: Config loaded from /mosquitto/config/mosquitto.conf.
+1638882142: Opening ipv4 listen socket on port 1883.
+1638882142: Opening ipv6 listen socket on port 1883.
+1638882142: Bridge local.bridgeawsiot doing local SUBSCRIBE on topic localgateway_to_awsiot
+1638882142: Bridge local.bridgeawsiot doing local SUBSCRIBE on topic both_directions
+1638882142: Connecting bridge awsiot (XXXXXXXXXXX.amazonaws.com:8883)
+1638882142: Bridge bridgeawsiot sending CONNECT
+1638882143: Received CONNACK on connection local.bridgeawsiot.
+1638882143: Bridge local.bridgeawsiot sending SUBSCRIBE (Mid: 1, Topic: awsiot_to_localgateway, QoS: 1)
+1638882143: Bridge local.bridgeawsiot sending UNSUBSCRIBE (Mid: 2, Topic: localgateway_to_awsiot)
+1638882143: Bridge local.bridgeawsiot sending SUBSCRIBE (Mid: 3, Topic: both_directions, QoS: 1)
+1638882143: Received UNSUBACK from local.bridgeawsiot
+1638882143: Received SUBACK from local.bridgeawsiot
+1638882143: Received SUBACK from local.bridgeawsiot
 ```
 
 

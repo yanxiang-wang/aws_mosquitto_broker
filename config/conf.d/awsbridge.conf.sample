@@ -2,7 +2,7 @@
 # Bridges to AWS IOT
 # =================================================================
 
-# AWS IoT endpoint, use AWS CLI 'aws iot describe-endpoint' and replace XXXX
+# AWS IoT endpoint, use AWS CLI 'aws iot describe-endpoint --endpoint-type iot:Data-ATS' and replace XXXX
 connection awsiot
 address xxxxxxxxx.iot.us-east-1.amazonaws.com:8883
 
